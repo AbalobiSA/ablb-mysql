@@ -19,20 +19,35 @@ try {
  * object in a callback
  * @param callback
  */
-function createConnection(callback) {
-    let conn = new jsforce.Connection();
-    console.log("Salesforce: Logging in...");
+function createConnection(pool) {
     return new Promise((resolve, reject) => {
-        conn.login(secrets.SF_USER, secrets.SF_PASSWORD, function(err, res) {
+        pool.getConnection((err, connection) => {
             if (err) {
                 reject(err);
             } else {
-                console.log("Salesforce: Login Successful.\n");
-                resolve(conn);
+                resolve(connection);
             }
         });
     });
 }
+
+// global.aws_mysql_pool.getConnection(function (err, connection) {
+//     if (err) {
+//         console.log(err);
+//     }
+//
+//     const fisherTrip = { Id: 'a0f1o00000I6bRaAAA', odk_uuid__c: uuidv4() };
+//     connection.query(`INSERT INTO Ablb_Fisher_Trip__c SET ?`, fisherTrip, (err, res) => {
+//         if (err) {
+//             console.log(err);
+//         }
+//
+//         connection.release();
+//
+//         console.log(res);
+//         // console.log(fields);
+//     });
+// });
 
 function createSearch(queryString, success, error){
     let conn = new jsforce.Connection();
@@ -200,26 +215,47 @@ function createMultiple(conn, sfObject, data) {
  * @param success
  * @param error
  */
-function createQuery(queryString, success, error){
-    let conn = new jsforce.Connection();
-
-    console.log("Salesforce: Logging in...");
-    conn.login(secrets.SF_USER, secrets.SF_PASSWORD, function(err, res) {
-        if (err) {
-            return console.error(err);
-        }
-        console.log("Salesforce: Login Successful.\n");
-        console.log(`Salesforce: Querying query string: \n${queryString}`);
-        conn.query(queryString, function(err, res) {
+function createQuery(conn, queryString) {
+    return new Promise((resolve, reject) => {
+        conn.query(queryString, (err, res) => {
             if (err) {
-                error(err);
-                return console.error(err);
+                reject(err);
+            } else {
+                resolve(res);
             }
-            console.log("Salesforce: Query successful.");
-
-            success(res);
         });
     });
+    // let conn = new jsforce.Connection();
+    //
+    // console.log("Salesforce: Logging in...");
+    // conn.login(secrets.SF_USER, secrets.SF_PASSWORD, function(err, res) {
+    //     if (err) {
+    //         return console.error(err);
+    //     }
+    //     console.log("Salesforce: Login Successful.\n");
+    //     console.log(`Salesforce: Querying query string: \n${queryString}`);
+    //     conn.query(queryString, function(err, res) {
+    //         if (err) {
+    //             error(err);
+    //             return console.error(err);
+    //         }
+    //         console.log("Salesforce: Query successful.");
+    //
+    //         success(res);
+    //     });
+    // });
+
+
+    //     connection.query(`INSERT INTO Ablb_Fisher_Trip__c SET ?`, fisherTrip, (err, res) => {
+//         if (err) {
+//             console.log(err);
+//         }
+//
+//         connection.release();
+//
+//         console.log(res);
+//         // console.log(fields);
+//     });
 }
 
 function getFieldNames(conn, sfObject) {
