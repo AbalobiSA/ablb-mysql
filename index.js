@@ -15,9 +15,8 @@ try {
 }
 
 /**
- * Creates a manual connection to salesforce and passes back the connection
- * object in a callback
- * @param callback
+ * Gets a connection from the connection pool and returns it via the promise
+ * @param pool
  */
 function createConnection(pool) {
     return new Promise((resolve, reject) => {
@@ -210,10 +209,8 @@ function createMultiple(conn, sfObject, data) {
 }
 
 /**
- * DEPRECATED - Use CreateConnection.then(conn => {conn.query() ... })
+ * Runs a query against the MySQL database
  * @param queryString
- * @param success
- * @param error
  */
 function createQuery(conn, queryString) {
     return new Promise((resolve, reject) => {
