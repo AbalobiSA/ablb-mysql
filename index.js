@@ -210,6 +210,7 @@ function createMultiple(conn, sfObject, data) {
 
 /**
  * Runs a query against the MySQL database
+ * @param conn
  * @param queryString
  */
 function createQuery(conn, queryString) {
