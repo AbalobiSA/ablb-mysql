@@ -1,12 +1,14 @@
 {
   "name": "ablb-mysql",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MySQL wrapper for Abalobi projects",
   "main": "index.js",
   "repository": "git@github.com:AbalobiSA/ablb-mysql.git",
   "author": "Albert Minnie <8544352+trebla64@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "gulp": "^4.0.0",
+    "gulp-bump": "^3.1.1",
     "mysql": "^2.16.0"
   }
 }
