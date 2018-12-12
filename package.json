@@ -5,5 +5,8 @@
   "main": "index.js",
   "repository": "git@github.com:AbalobiSA/ablb-mysql.git",
   "author": "Albert Minnie <8544352+trebla64@users.noreply.github.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
 }
