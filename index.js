@@ -352,7 +352,7 @@ module.exports = {
     updateSingle: updatePromise,
     createConnection,
     createSingle,
-    createSingleFake,
+    // createSingleFake,
     createSearch: searchPromise,
     createMultiple,
     deleteSingle,
