@@ -30,85 +30,67 @@ function createConnection(pool) {
     });
 }
 
-// global.aws_mysql_pool.getConnection(function (err, connection) {
-//     if (err) {
-//         console.log(err);
-//     }
+// function createSearch(queryString, success, error){
+//     let conn = new jsforce.Connection();
 //
-//     const fisherTrip = { Id: 'a0f1o00000I6bRaAAA', odk_uuid__c: uuidv4() };
-//     connection.query(`INSERT INTO Ablb_Fisher_Trip__c SET ?`, fisherTrip, (err, res) => {
+//     conn.login(secrets.SF_USER, secrets.SF_PASSWORD, (err, res) => {
 //         if (err) {
-//             console.log(err);
+//             return console.error(err);
 //         }
 //
-//         connection.release();
+//         conn.search(queryString,
+//             function(err, res) {
 //
-//         console.log(res);
-//         // console.log(fields);
+//                 if (err) {
+//                     error(err);
+//                     return console.error(err);
+//                 }
+//                 // console.log(res);
+//                 console.log(`RESPONSES RECEIVED: ${res.searchRecords.length}`);
+//                 success(res);
+//             }
+//         );
 //     });
-// });
+// }
 
-function createSearch(queryString, success, error){
-    let conn = new jsforce.Connection();
+// function searchPromise(conn, querystring) {
+//
+//     const removeDashes = (text) => text.split("-").join("\\-");
+//
+//     return new Promise((resolve, reject) => {
+//         conn.search(removeDashes(querystring), (err, res) => {
+//             if (err) {
+//                 console.log("salesforce: search error: ", err);
+//                 reject(err);
+//             } else {
+//                 console.log(`salesforce: search debug: RESPONSES RECEIVED: ${res.searchRecords.length}`);
+//                 resolve(res);
+//             }
+//         });
+//     })
+// }
 
-    conn.login(secrets.SF_USER, secrets.SF_PASSWORD, (err, res) => {
-        if (err) {
-            return console.error(err);
-        }
-
-        conn.search(queryString,
-            function(err, res) {
-
-                if (err) {
-                    error(err);
-                    return console.error(err);
-                }
-                // console.log(res);
-                console.log(`RESPONSES RECEIVED: ${res.searchRecords.length}`);
-                success(res);
-            }
-        );
-    });
-}
-
-function searchPromise(conn, querystring) {
-
-    const removeDashes = (text) => text.split("-").join("\\-");
-
-    return new Promise((resolve, reject) => {
-        conn.search(removeDashes(querystring), (err, res) => {
-            if (err) {
-                console.log("salesforce: search error: ", err);
-                reject(err);
-            } else {
-                console.log(`salesforce: search debug: RESPONSES RECEIVED: ${res.searchRecords.length}`);
-                resolve(res);
-            }
-        });
-    })
-}
-
-function update(table, updateobject, success, error) {
-    let conn = new jsforce.Connection();
-    conn.login(secrets.SF_USER, secrets.SF_PASSWORD, function(err, res) {
-        if (err) {
-            error(err);
-            return console.error(err);
-        }
-
-        // Single record update
-        conn.sobject(table).update(updateobject, function(err, ret) {
-            if (err || !ret.success) {
-                error(err);
-                return console.error(err, ret);
-            }
-            else {
-                success('Updated Successfully : ' + ret.id);
-                console.log('Updated Successfully : ' + ret.id);
-            }
-        });
-    });
-}
+// function update(table, updateobject, success, error) {
+//     let conn = new jsforce.Connection();
+//     conn.login(secrets.SF_USER, secrets.SF_PASSWORD, function(err, res) {
+//         if (err) {
+//             error(err);
+//             return console.error(err);
+//         }
+//
+//         // Single record update
+//         conn.sobject(table).update(updateobject, function(err, ret) {
+//             if (err || !ret.success) {
+//                 error(err);
+//                 return console.error(err, ret);
+//             }
+//             else {
+//                 success('Updated Successfully : ' + ret.id);
+//                 console.log('Updated Successfully : ' + ret.id);
+//             }
+//         });
+//     });
+// }
 
 /**
  * Update a single record in a table.
@@ -117,22 +99,22 @@ function update(table, updateobject, success, error) {
  * @param updateobject
  * @returns {Promise}
  */
-function updatePromise (conn, table, updateobject) {
-    return new Promise((resolve, reject) => {
-        // Single record update
-        conn.sobject(table).update(updateobject, function(err, ret) {
-            if (err || !ret.success) {
-                // error(err);
-                console.error(err, ret);
-                reject([err, ret]);
-            }
-            else {
-                console.log('Updated Successfully : ' + ret.id);
-                resolve(ret.id);
-            }
-        });
-    })
-}
+// function updatePromise (conn, table, updateobject) {
+//     return new Promise((resolve, reject) => {
+//         // Single record update
+//         conn.sobject(table).update(updateobject, function(err, ret) {
+//             if (err || !ret.success) {
+//                 // error(err);
+//                 console.error(err, ret);
+//                 reject([err, ret]);
+//             }
+//             else {
+//                 console.log('Updated Successfully : ' + ret.id);
+//                 resolve(ret.id);
+//             }
+//         });
+//     })
+// }
 
 /**
  * Take a single object and create a new MySQL record in a specific table.
@@ -152,33 +134,24 @@ function createSingle(conn, tableName, data) {
                 resolve(res);
             }
         });
-        // conn.sobject(tableName).create(data, (err, ret) => {
-        //     if (err || !ret.success) {
-        //         reject (err);
-        //         return console.error(err, ret);
-        //     } else {
-        //         // Resolve with the created record ID
-        //         resolve(ret.id)
-        //     }
-        // });
     });
 }
 
-function createSingleFake(conn, tableName, data) {
-    // Single record creation
-    return new Promise((resolve, reject) => {
-        let currentDate = new Date();
-        let dateString = currentDate.toISOString();
-        let filename = sanitize(dateString);
-        fs.writeFile("../../" + filename + ".json", JSON.stringify(data, null, 4), (err, success) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve("FAKE_SALESFORCE_ID");
-            }
-        })
-    });
-}
+// function createSingleFake(conn, tableName, data) {
+//     // Single record creation
+//     return new Promise((resolve, reject) => {
+//         let currentDate = new Date();
+//         let dateString = currentDate.toISOString();
+//         let filename = sanitize(dateString);
+//         fs.writeFile("../../" + filename + ".json", JSON.stringify(data, null, 4), (err, success) => {
+//             if (err) {
+//                 reject(err);
+//             } else {
+//                 resolve("FAKE_SALESFORCE_ID");
+//             }
+//         })
+//     });
+// }
 
 /**
  * Takes an array of objects to insert into a Salesforce table.
@@ -186,34 +159,34 @@ function createSingleFake(conn, tableName, data) {
  * @param sfObject - Table to insert objects into
  * @param data - Array of data to insert into table
  */
-function createMultiple(conn, sfObject, data) {
-    let limiter = new RateLimiter(1, 250);
-    let splitData = splitArray(data);
-
-    for (let i = 0; i < splitData.length; i++) {
-        limiter.removeTokens(1, function() {
-            conn.sobject(sfObject).create(splitData[i], (err, rets) => {
-                if (err) { return console.error(err); }
-                for (let i=0; i < rets.length; i++) {
-                    if (rets[i].success) {
-                        console.log("Created record id : " + rets[i].id);
-                    }
-                }
-            })
-        });
-    }
-
-    // Splits the array of data into chunks of 10
-    function splitArray(array) {
-        let i,j,temparray,chunk = 10;
-        let newArray = [];
-        for (i=0,j=array.length; i<j; i+=chunk) {
-            temparray = array.slice(i,i+chunk);
-            newArray.push(temparray);
-        }
-        return newArray;
-    }
-}
+// function createMultiple(conn, sfObject, data) {
+//     let limiter = new RateLimiter(1, 250);
+//     let splitData = splitArray(data);
+//
+//     for (let i = 0; i < splitData.length; i++) {
+//         limiter.removeTokens(1, function() {
+//             conn.sobject(sfObject).create(splitData[i], (err, rets) => {
+//                 if (err) { return console.error(err); }
+//                 for (let i=0; i < rets.length; i++) {
+//                     if (rets[i].success) {
+//                         console.log("Created record id : " + rets[i].id);
+//                     }
+//                 }
+//             })
+//         });
+//     }
+//
+//     // Splits the array of data into chunks of 10
+//     function splitArray(array) {
+//         let i,j,temparray,chunk = 10;
+//         let newArray = [];
+//         for (i=0,j=array.length; i<j; i+=chunk) {
+//             temparray = array.slice(i,i+chunk);
+//             newArray.push(temparray);
+//         }
+//         return newArray;
+//     }
+// }
 
 /**
  * Runs a query against the MySQL database
@@ -230,37 +203,6 @@ function createQuery(conn, queryString) {
             }
         });
     });
-    // let conn = new jsforce.Connection();
-    //
-    // console.log("Salesforce: Logging in...");
-    // conn.login(secrets.SF_USER, secrets.SF_PASSWORD, function(err, res) {
-    //     if (err) {
-    //         return console.error(err);
-    //     }
-    //     console.log("Salesforce: Login Successful.\n");
-    //     console.log(`Salesforce: Querying query string: \n${queryString}`);
-    //     conn.query(queryString, function(err, res) {
-    //         if (err) {
-    //             error(err);
-    //             return console.error(err);
-    //         }
-    //         console.log("Salesforce: Query successful.");
-    //
-    //         success(res);
-    //     });
-    // });
-
-
-    //     connection.query(`INSERT INTO Ablb_Fisher_Trip__c SET ?`, fisherTrip, (err, res) => {
-//         if (err) {
-//             console.log(err);
-//         }
-//
-//         connection.release();
-//
-//         console.log(res);
-//         // console.log(fields);
-//     });
 }
 
 function getFieldNames(conn, sfObject) {
@@ -310,59 +252,59 @@ function getRecords (err, records) {
 
 
 
-function deleteSingle(conn, table, objectId) {
-    return new Promise((resolve, reject) => {
-        conn.sobject(table).destroy(objectId, function(err, ret) {
-            if (err || !ret.success) {
-                reject (err);
-                console.error(err, ret);
-            } else {
-                resolve(ret.id);
-            }
-            console.log('Salesforce: Deleted Successfully : ' + ret.id);
-        });
-    })
-}
+// function deleteSingle(conn, table, objectId) {
+//     return new Promise((resolve, reject) => {
+//         conn.sobject(table).destroy(objectId, function(err, ret) {
+//             if (err || !ret.success) {
+//                 reject (err);
+//                 console.error(err, ret);
+//             } else {
+//                 resolve(ret.id);
+//             }
+//             console.log('Salesforce: Deleted Successfully : ' + ret.id);
+//         });
+//     })
+// }
 
-function deleteMultiple(conn, table, thingsToDelete) {
-    return new Promise((resolve, reject) => {
-        let limiter = new RateLimiter(1, 250);
-        // let splitData = splitArray(data);
-
-        for (let i = 0; i < thingsToDelete.length; i++) {
-            limiter.removeTokens(1, () => {
-                conn.sobject(table).destroy(thingsToDelete[i], (err, ret) => {
-                    if (err || !ret.success) {
-                        reject (err);
-                        console.error(err, ret);
-                    } else {
-                        resolve(ret.id);
-                    }
-                    console.log('Salesforce: Deleted Successfully : ' + ret.id);
-                });
-
-                if (i === thingsToDelete.length -1) {
-                    resolve("All items deleted successfully!");
-                }
-            });
-        }
-    })
-}
+// function deleteMultiple(conn, table, thingsToDelete) {
+//     return new Promise((resolve, reject) => {
+//         let limiter = new RateLimiter(1, 250);
+//         // let splitData = splitArray(data);
+//
+//         for (let i = 0; i < thingsToDelete.length; i++) {
+//             limiter.removeTokens(1, () => {
+//                 conn.sobject(table).destroy(thingsToDelete[i], (err, ret) => {
+//                     if (err || !ret.success) {
+//                         reject (err);
+//                         console.error(err, ret);
+//                     } else {
+//                         resolve(ret.id);
+//                     }
+//                     console.log('Salesforce: Deleted Successfully : ' + ret.id);
+//                 });
+//
+//                 if (i === thingsToDelete.length -1) {
+//                     resolve("All items deleted successfully!");
+//                 }
+//             });
+//         }
+//     })
+// }
 
 
 module.exports = {
     // Old methods
     query: createQuery,
-    search: createSearch,
-    update,
+    // search: createSearch,
+    // update,
     // New methods
-    updateSingle: updatePromise,
+    // updateSingle: updatePromise,
     createConnection,
     createSingle,
     // createSingleFake,
-    createSearch: searchPromise,
-    createMultiple,
-    deleteSingle,
-    deleteMultiple,
+    // createSearch: searchPromise,
+    // createMultiple,
+    // deleteSingle,
+    // deleteMultiple,
     getFieldNames
 };
