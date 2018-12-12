@@ -135,7 +135,7 @@ function updatePromise (conn, table, updateobject) {
 }
 
 /**
- * Take a single object and create a new Salesforce record in a specific table.
+ * Take a single object and create a new MySQL record in a specific table.
  * Returns a promise with error or success string.
  * @param conn
  * @param tableName
@@ -145,15 +145,22 @@ function updatePromise (conn, table, updateobject) {
 function createSingle(conn, tableName, data) {
     // Single record creation
     return new Promise((resolve, reject) => {
-        conn.sobject(tableName).create(data, (err, ret) => {
-            if (err || !ret.success) {
-                reject (err);
-                return console.error(err, ret);
+        conn.query(`INSERT INTO ${tableName} SET ?`, data, (err, res) => {
+            if (err) {
+                reject(err);
             } else {
-                // Resolve with the created record ID
-                resolve(ret.id)
+                resolve(res);
             }
         });
+        // conn.sobject(tableName).create(data, (err, ret) => {
+        //     if (err || !ret.success) {
+        //         reject (err);
+        //         return console.error(err, ret);
+        //     } else {
+        //         // Resolve with the created record ID
+        //         resolve(ret.id)
+        //     }
+        // });
     });
 }
 
