@@ -126,7 +126,7 @@ function updateSingle(conn, table, updateobject) {
         }
 
         for (let i = 0; i < keys.length; i++) {
-            queryString += `${keys[i]} = ${updateobject[keys[i]]}`;
+            queryString += `${keys[i].key} = ${updateobject[keys[i].key]}`;
             if (i < (keys.length - 1)) {
                 queryString += `, `;
             }
