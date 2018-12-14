@@ -1,12 +1,5 @@
 let mysql = require('mysql');
 
-let pool;
-
-function setupPool(credentials) {
-    console.log(`Setting up MySQL connection pool`);
-    pool = mysql.createPool(credentials);
-}
-
 /**
  * Gets a connection from the connection pool and returns it via the promise
  * @param pool
@@ -20,6 +13,18 @@ function createConnection(pool) {
                 resolve(connection);
             }
         });
+    });
+}
+
+function singleQuery(pool, queryString) {
+    return new Promise((resolve, reject) => {
+        pool.query(queryString, (err, result, fields) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        })
     });
 }
 
@@ -198,34 +203,34 @@ function createQuery(conn, queryString) {
     });
 }
 
-function getFieldNames(conn, sfObject) {
-    return new Promise((resolve, reject) => {
-        conn.sobject(sfObject)
-            .select('*')
-            .limit(1)
-            .execute(getRecords)
-            .then(records => {
-                let keysArr = [];
-                // Build an array of fields in this object
-                if (records.length > 0) {
-                    for (let i in records[0]) {
-                        if (records[0].hasOwnProperty(i)) {
-                            keysArr.push(i);
-                        }
-                    }
-                    resolve(keysArr);
-                    return;
-                } else {
-                    reject("No records found for " + sfObject);
-                }
-
-            }).catch(ex => {
-            console.log("Error");
-            console.log(ex);
-            reject("Error in SalesForce: " + ex);
-        });
-    });
-}
+// function getFieldNames(conn, sfObject) {
+//     return new Promise((resolve, reject) => {
+//         conn.sobject(sfObject)
+//             .select('*')
+//             .limit(1)
+//             .execute(getRecords)
+//             .then(records => {
+//                 let keysArr = [];
+//                 // Build an array of fields in this object
+//                 if (records.length > 0) {
+//                     for (let i in records[0]) {
+//                         if (records[0].hasOwnProperty(i)) {
+//                             keysArr.push(i);
+//                         }
+//                     }
+//                     resolve(keysArr);
+//                     return;
+//                 } else {
+//                     reject("No records found for " + sfObject);
+//                 }
+//
+//             }).catch(ex => {
+//             console.log("Error");
+//             console.log(ex);
+//             reject("Error in SalesForce: " + ex);
+//         });
+//     });
+// }
 
 /**
  * Promisify function for sfObject execute chain method
@@ -233,15 +238,15 @@ function getFieldNames(conn, sfObject) {
  * @param records
  * @returns {Promise}
  */
-function getRecords (err, records) {
-    return new Promise((resolve, reject) => {
-        if (err) {
-            reject(err);
-        } else {
-            resolve(records);
-        }
-    })
-}
+// function getRecords (err, records) {
+//     return new Promise((resolve, reject) => {
+//         if (err) {
+//             reject(err);
+//         } else {
+//             resolve(records);
+//         }
+//     })
+// }
 
 
 
@@ -286,13 +291,10 @@ function getRecords (err, records) {
 
 
 module.exports = {
-    pool: pool,
-    setupPool,
-    // Old methods
     query: createQuery,
+    singleQuery,
     // search: createSearch,
     // update,
-    // New methods
     // updateSingle: updatePromise,
     createConnection,
     createSingle,
@@ -301,5 +303,5 @@ module.exports = {
     // createMultiple,
     // deleteSingle,
     // deleteMultiple,
-    getFieldNames
+    // getFieldNames
 };
