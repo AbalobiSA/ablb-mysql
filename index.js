@@ -135,6 +135,19 @@ function createSingle(conn, tableName, data) {
     });
 }
 
+function pool_createSingle(pool, tableName, data) {
+    // Single record creation
+    return new Promise((resolve, reject) => {
+        pool.query(`INSERT INTO ${tableName} SET ?`, data, (err, res, fields) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        });
+    });
+}
+
 // function createSingleFake(conn, tableName, data) {
 //     // Single record creation
 //     return new Promise((resolve, reject) => {
@@ -298,6 +311,7 @@ module.exports = {
     // updateSingle: updatePromise,
     createConnection,
     createSingle,
+    pool_createSingle,
     // createSingleFake,
     // createSearch: searchPromise,
     // createMultiple,
