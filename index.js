@@ -122,20 +122,28 @@ function updateSingle(conn, table, updateobject) {
         }
 
         if (!foundId) {
-            return Promise.reject(`No Id found to update on`)
-        }
-
-        for (let i = 0; i < keys.length; i++) {
-            queryString += `${keys[i].key} = ${updateobject[keys[i].key]}`;
-            if (i < (keys.length - 1)) {
-                queryString += `, `;
+            reject(`No Id found to update on`)
+        } else {
+            for (let i = 0; i < keys.length; i++) {
+                queryString += `${keys[i].key} = ${updateobject[keys[i].key]}`;
+                if (i < (keys.length - 1)) {
+                    queryString += `, `;
+                }
             }
+            queryString += ` WHERE ${idKey} = ${updateobject[idKey]}`;
+
+            console.log("queryString: ", queryString);
+
+            conn.query(queryString, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+
+            // resolve('Method not done yet');
         }
-        queryString += ` WHERE ${idKey} = ${updateobject[idKey]}`;
-
-        console.log("queryString: ", queryString);
-
-        resolve('Method not done yet');
 
         // // Single record update
         // conn.sobject(table).update(updateobject, function(err, ret) {
