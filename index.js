@@ -103,11 +103,37 @@ function updateSingle(conn, table, updateobject) {
         let queryString = `UPDATE ${table} SET `;
 
         let keys = [];
+        let foundId = false;
+        let idKey;
+        let idType;
         for (let key in updateobject) {
             console.log(`key '${key}', type '${typeof key}'`);
             console.log(`value '${updateobject[key]}', type '${typeof updateobject[key]}'`);
-            keys.push(key);
+            if (key.toLowerCase() !== 'id') {
+                keys.push({
+                    key: key,
+                    type: typeof updateobject[key]
+                });
+            } else {
+                foundId = true;
+                idKey = key;
+                idType = typeof updateobject[key];
+            }
         }
+
+        if (!foundId) {
+            reject(`No Id found to update on`)
+        }
+
+        for (let i = 0; i < keys.length; i++) {
+            queryString += `${keys[i]} = ${updateobject[keys[i]]}`;
+            if (i < (keys.length - 1)) {
+                queryString += `, `;
+            }
+        }
+        queryString += ` WHERE ${idKey} = ${updateobject[idKey]}`;
+
+        console.log("queryString: ", queryString);
 
         resolve('Method not done yet');
 
