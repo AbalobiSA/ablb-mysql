@@ -122,7 +122,7 @@ function updateSingle(conn, table, updateobject) {
         }
 
         if (!foundId) {
-            reject(`No Id found to update on`)
+            return Promise.reject(`No Id found to update on`)
         }
 
         for (let i = 0; i < keys.length; i++) {
