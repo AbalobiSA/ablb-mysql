@@ -1,17 +1,10 @@
-/**
- * Created by Carl on 2017-05-24.
- */
-let jsforce = require('jsforce');
-let RateLimiter = require('limiter').RateLimiter;
-let sanitize = require("sanitize-filename");
-let fs = require('fs');
-let secrets;
+let mysql = require('mysql');
 
-try {
-    secrets = require("../../secrets/secrets.js");
-} catch (ex) {
-    console.log("./secrets/secrets.js - Secrets file does not exist! Please copy this in before continuing.");
-    process.exit();
+let pool;
+
+function setupPool(credentials) {
+    console.log(`Setting up MySQL connection pool`);
+    pool = mysql.createPool(credentials);
 }
 
 /**
@@ -293,6 +286,8 @@ function getRecords (err, records) {
 
 
 module.exports = {
+    pool: pool,
+    setupPool,
     // Old methods
     query: createQuery,
     // search: createSearch,
