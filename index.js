@@ -97,22 +97,34 @@ function singleQuery(pool, queryString) {
  * @param updateobject
  * @returns {Promise}
  */
-// function updatePromise (conn, table, updateobject) {
-//     return new Promise((resolve, reject) => {
-//         // Single record update
-//         conn.sobject(table).update(updateobject, function(err, ret) {
-//             if (err || !ret.success) {
-//                 // error(err);
-//                 console.error(err, ret);
-//                 reject([err, ret]);
-//             }
-//             else {
-//                 console.log('Updated Successfully : ' + ret.id);
-//                 resolve(ret.id);
-//             }
-//         });
-//     })
-// }
+function updateSingle(conn, table, updateobject) {
+    console.log(`updateSingle`);
+    return new Promise((resolve, reject) => {
+        let queryString = `UPDATE ${table} SET `;
+
+        let keys = [];
+        for (let key in updateobject) {
+            console.log(`key '${key}', type '${typeof key}'`);
+            console.log(`value '${updateobject[key]}', type '${typeof updateobject[key]}'`);
+            keys.push(key);
+        }
+
+        resolve('Method not done yet');
+
+        // // Single record update
+        // conn.sobject(table).update(updateobject, function(err, ret) {
+        //     if (err || !ret.success) {
+        //         // error(err);
+        //         console.error(err, ret);
+        //         reject([err, ret]);
+        //     }
+        //     else {
+        //         console.log('Updated Successfully : ' + ret.id);
+        //         resolve(ret.id);
+        //     }
+        // });
+    })
+}
 
 /**
  * Take a single object and create a new MySQL record in a specific table.
@@ -308,7 +320,7 @@ module.exports = {
     singleQuery,
     // search: createSearch,
     // update,
-    // updateSingle: updatePromise,
+    updateSingle,
     createConnection,
     createSingle,
     pool_createSingle,
