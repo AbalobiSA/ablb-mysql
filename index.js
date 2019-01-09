@@ -175,7 +175,7 @@ function createSingle(conn, tableName, data) {
             if (err) {
                 reject(err);
             } else {
-                resolve(res);
+                resolve(res.insertId);
             }
         });
     });
@@ -188,7 +188,7 @@ function pool_createSingle(pool, tableName, data) {
             if (err) {
                 reject(err);
             } else {
-                resolve(res);
+                resolve(res.insertId);
             }
         });
     });
