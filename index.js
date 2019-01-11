@@ -1,4 +1,4 @@
-let mysql = require('mysql');
+// const mysql = require('mysql2');
 
 /**
  * Gets a connection from the connection pool and returns it via the promise
