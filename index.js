@@ -1,4 +1,5 @@
 // const mysql = require('mysql2');
+const jwt_decode = require('jwt-decode');
 
 /**
  * Gets a connection from the connection pool and returns it via the promise
@@ -20,6 +21,14 @@ function singleQuery(pool, queryString, headers) {
     console.log(`singleQuery`);
     return new Promise((resolve, reject) => {
         console.log(headers);
+
+        if (headers !== undefined) {
+            let authHeader = headers.authorization;
+            let idToken = authHeader.split('Bearer ')[1]
+            let decoded = jwt_decode(idToken);
+            console.log(decoded);
+        }
+
         pool.query(queryString, (err, result, fields) => {
             if (err) {
                 reject(err);

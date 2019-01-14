@@ -1,6 +1,6 @@
 {
   "name": "ablb-mysql",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "MySQL wrapper for Abalobi projects",
   "main": "index.js",
   "repository": "git@github.com:AbalobiSA/ablb-mysql.git",
@@ -9,6 +9,7 @@
   "dependencies": {
     "gulp": "^4.0.0",
     "gulp-bump": "^3.1.1",
+    "jwt-decode": "^2.2.0",
     "mysql": "^2.16.0"
   }
 }
