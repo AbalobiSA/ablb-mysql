@@ -22,14 +22,19 @@ function singleQuery(pool, queryString, headers) {
     return new Promise((resolve, reject) => {
         // console.log(headers);
 
+        let tenant = 'ZA';
         if (headers !== undefined) {
             let authHeader = headers.authorization;
             let idToken = authHeader.split('Bearer ')[1];
             let decoded = jwt_decode(idToken);
-            let tenant = decoded['http://ablb/tenant'];
+            tenant = decoded['http://ablb/tenant'];
             // console.log(decoded);
             console.log("Tenant: ", tenant);
         }
+
+        queryString = `USE Abalobi_${tenant};` + queryString;
+
+        console.log(queryString);
 
         pool.query(queryString, (err, result, fields) => {
             if (err) {
