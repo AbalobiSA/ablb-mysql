@@ -28,6 +28,12 @@ function singleQuery(pool, queryString, headers) {
             let idToken = authHeader.split('Bearer ')[1];
             let decoded = jwt_decode(idToken);
             tenant = decoded['http://ablb/tenant'];
+
+            // Override tenant to default to South Africa if it wasn't set in Auth0
+            if (tenant === 'NONE') {
+                tenant = 'ZA';
+            }
+
             // console.log(decoded);
             console.log("Tenant: ", tenant);
         }
