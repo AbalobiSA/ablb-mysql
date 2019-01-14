@@ -20,13 +20,15 @@ function createConnection(pool) {
 function singleQuery(pool, queryString, headers) {
     console.log(`singleQuery`);
     return new Promise((resolve, reject) => {
-        console.log(headers);
+        // console.log(headers);
 
         if (headers !== undefined) {
             let authHeader = headers.authorization;
-            let idToken = authHeader.split('Bearer ')[1]
+            let idToken = authHeader.split('Bearer ')[1];
             let decoded = jwt_decode(idToken);
-            console.log(decoded);
+            let tenant = decoded['http://ablb/tenant'];
+            // console.log(decoded);
+            console.log("Tenant: ", tenant);
         }
 
         pool.query(queryString, (err, result, fields) => {
