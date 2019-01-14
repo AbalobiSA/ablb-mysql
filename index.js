@@ -16,8 +16,10 @@ function createConnection(pool) {
     });
 }
 
-function singleQuery(pool, queryString) {
+function singleQuery(pool, queryString, headers) {
+    console.log(`singleQuery`);
     return new Promise((resolve, reject) => {
+        console.log(headers);
         pool.query(queryString, (err, result, fields) => {
             if (err) {
                 reject(err);
