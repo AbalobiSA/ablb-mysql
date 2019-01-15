@@ -18,12 +18,14 @@ function createConnection(pool) {
 }
 
 function singleQuery(pool, queryString, headers) {
-    console.log(`singleQuery`);
+    //console.log(`singleQuery`);
     return new Promise((resolve, reject) => {
         // console.log(headers);
 
         let tenant = 'ZA';
         if (headers !== undefined) {
+            //Get tenant from auth header
+            //TODO: might need to be changed to 'Authorization'
             let authHeader = headers.authorization;
             let idToken = authHeader.split('Bearer ')[1];
             let decoded = jwt_decode(idToken);
@@ -37,16 +39,21 @@ function singleQuery(pool, queryString, headers) {
             // console.log(decoded);
             console.log("Tenant: ", tenant);
         }
-
-        queryString = `USE Abalobi_${tenant};` + queryString;
-
-        console.log(queryString);
-
-        pool.query(queryString, (err, result, fields) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
+        pool.getConnection((err, conn) => {
+            if(err) reject(err);
+            else {
+                conn.query(`USE Abalobi_${tenant};`, err => {
+                    if(err) reject(err);
+                    else {
+                        conn.query(queryString, (err, result, fields) => {
+                            if(err) reject(err);
+                            else {
+                                pool.releaseConnection(conn);
+                                resolve(result, fields)
+                            }
+                        })
+                    }
+                });
             }
         })
     });
