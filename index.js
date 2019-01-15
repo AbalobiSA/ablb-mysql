@@ -39,23 +39,40 @@ function singleQuery(pool, queryString, headers) {
             // console.log(decoded);
             console.log("Tenant: ", tenant);
         }
-        pool.getConnection((err, conn) => {
-            if(err) reject(err);
-            else {
-                conn.query(`USE Abalobi_${tenant};`, err => {
-                    if(err) reject(err);
-                    else {
-                        conn.query(queryString, (err, result, fields) => {
-                            if(err) reject(err);
-                            else {
-                                pool.releaseConnection(conn);
-                                resolve(result, fields)
-                            }
-                        })
-                    }
-                });
+
+        let connection = undefined;
+        createConnection(pool)
+        .then(conn => {
+            connection = conn;
+            return createQuery(conn, `USE Abalobi_${tenant}`);
+        }).then(result => {
+            return createQuery(connection, queryString);
+        }).then(result => {
+            connection.release();
+            resolve(result);
+        }).catch(error => {
+            if (connection !== undefined) {
+                connection.release();
             }
-        })
+            reject(error);
+        });
+        // pool.getConnection((err, conn) => {
+        //     if(err) reject(err);
+        //     else {
+        //         conn.query(`USE Abalobi_${tenant};`, err => {
+        //             if(err) reject(err);
+        //             else {
+        //                 conn.query(queryString, (err, result, fields) => {
+        //                     if(err) reject(err);
+        //                     else {
+        //                         pool.releaseConnection(conn);
+        //                         resolve(result, fields)
+        //                     }
+        //                 })
+        //             }
+        //         });
+        //     }
+        // })
     });
 }
 
