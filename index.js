@@ -23,7 +23,7 @@ function singleQuery(pool, queryString, headers) {
         // console.log(headers);
 
         let tenant = 'ZA';
-        if (headers !== undefined) {
+        if (headers && (headers.authorization || headers.Authorization)) {
             //Get tenant from auth header
             //TODO: might need to be changed to 'Authorization'
             let authHeader = headers.authorization;
