@@ -25,16 +25,18 @@ function singleQuery(pool, queryString, headers) {
         let tenant = 'ZA';
         if (headers && (headers.authorization || headers.Authorization)) {
             //Get tenant from auth header
-            //TODO: might need to be changed to 'Authorization'
-            let authHeader = headers.authorization;
-            let idToken = authHeader.split('Bearer ')[1];
-            let decoded = jwt_decode(idToken);
-            tenant = decoded['http://ablb/tenant'];
-
-            // Override tenant to default to South Africa if it wasn't set in Auth0
-            if (tenant === 'NONE') {
-                tenant = 'ZA';
+            let authHeader = headers.authorization || headers.Authorization;
+            if(!authHeader.includes('Digest')){
+                let idToken = authHeader.split('Bearer ')[1];
+                let decoded = jwt_decode(idToken);
+                tenant = decoded['http://ablb/tenant'];
+    
+                // Override tenant to default to South Africa if it wasn't set in Auth0
+                if (tenant === 'NONE') {
+                    tenant = 'ZA';
+                }
             }
+
 
             // console.log(decoded);
             console.log("Tenant: ", tenant);
