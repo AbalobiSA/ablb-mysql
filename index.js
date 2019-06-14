@@ -41,7 +41,7 @@ function singleQuery(pool, queryString, headers) {
                         tenant = decoded['http://ablb/tenant'];
 
                         // Override tenant to default to South Africa if it wasn't set in Auth0
-                        if (tenant === 'NONE') {
+                        if (tenant === undefined || tenant === 'NONE') {
                             tenant = 'ZA';
                         }
                     }
