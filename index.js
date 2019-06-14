@@ -27,14 +27,35 @@ function singleQuery(pool, queryString, headers) {
             //Get tenant from auth header
             let authHeader = headers.authorization || headers.Authorization;
             if(!authHeader.includes('Digest')){
-                let idToken = authHeader.split('Bearer ')[1];
-                console.log("idToken: ", idToken);
-                let decoded = jwt_decode(idToken);
-                tenant = decoded['http://ablb/tenant'];
-    
-                // Override tenant to default to South Africa if it wasn't set in Auth0
-                if (tenant === 'NONE') {
-                    tenant = 'ZA';
+                // var parts = req.headers.authorization.split(' ');
+                // if (parts.length == 2) {
+                //     var scheme = parts[0];
+                //     var credentials = parts[1];
+                let parts = authHeader.split(' ');
+                if (parts.length === 2) {
+                    let scheme = parts[0];
+                    let credentials = parts[1];
+                    if (/^Bearer$/i.test(scheme)) {
+                        console.log("idToken: ", credentials);
+                        let decoded = jwt_decode(credentials);
+                        tenant = decoded['http://ablb/tenant'];
+
+                        // Override tenant to default to South Africa if it wasn't set in Auth0
+                        if (tenant === 'NONE') {
+                            tenant = 'ZA';
+                        }
+                    }
+                    // // if (/^Bearer$/i.test(scheme)) {
+                    //
+                    // let idToken = authHeader.split('Bearer ')[1];
+                    // console.log("idToken: ", idToken);
+                    // let decoded = jwt_decode(idToken);
+                    // tenant = decoded['http://ablb/tenant'];
+                    //
+                    // // Override tenant to default to South Africa if it wasn't set in Auth0
+                    // if (tenant === 'NONE') {
+                    //     tenant = 'ZA';
+                    // }
                 }
             }
 
