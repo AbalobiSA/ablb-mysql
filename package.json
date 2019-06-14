@@ -1,6 +1,6 @@
 {
   "name": "ablb-mysql",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "MySQL wrapper for Abalobi projects",
   "main": "index.js",
   "repository": "git@github.com:AbalobiSA/ablb-mysql.git",

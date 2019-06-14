@@ -28,6 +28,7 @@ function singleQuery(pool, queryString, headers) {
             let authHeader = headers.authorization || headers.Authorization;
             if(!authHeader.includes('Digest')){
                 let idToken = authHeader.split('Bearer ')[1];
+                console.log("idToken: ", idToken);
                 let decoded = jwt_decode(idToken);
                 tenant = decoded['http://ablb/tenant'];
     
