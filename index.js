@@ -36,7 +36,7 @@ function singleQuery(pool, queryString, headers) {
                     let scheme = parts[0];
                     let credentials = parts[1];
                     if (/^Bearer$/i.test(scheme)) {
-                        console.log("idToken: ", credentials);
+                        // console.log("idToken: ", credentials);
                         let decoded = jwt_decode(credentials);
                         tenant = decoded['http://ablb/tenant'];
 
