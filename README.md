@@ -1,3 +1,6 @@
+# DEPRECATED - DO NOT USE - THIS REPO HAS BEEN MOVED TO BITBUCKET
+See https://bitbucket.org/abalobi
+
 # Abalobi MySQL
 
 This is a MySQL wrapper as a node module, to easily create multiple MySQL queries in NodeJS.
